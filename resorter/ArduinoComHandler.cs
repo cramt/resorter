@@ -7,6 +7,10 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace resorter {
+    class ArduinoCommand {
+        public List<object> Arguments;
+        public string name;
+    }
     class ArduinoComHandler {
 
         private static Thread CreateReadThread(ArduinoComHandler arduinoComHandler) {
@@ -26,15 +30,13 @@ namespace resorter {
             });
         }
 
-
-        private SerialPort serialPort;
-        private bool continueReadThread = true;
-        private Thread readThread;
-
-        public void OnDataRecived(string data) {
-            int indexArgumentStart = data.IndexOf('(');
-            string functionName = data.Substring(0, indexArgumentStart);
-            List<string> arguments = data.Substring(indexArgumentStart + 1, data.Length - 1).Split(',').Select(x => x.Trim()).ToList();
+        public static ArduinoCommand ParseArduinoCommand(string rawCommand) {
+            int indexArgumentStart = rawCommand.IndexOf('(');
+            string functionName = rawCommand.Substring(0, indexArgumentStart);
+            List<string> SplitArgumentString(string argumentString) {
+                return argumentString.SplitWithin(',', new char[] { '"', '"' }, new char[] { '[', ']' })
+                .Select(x => x.Trim()).ToList();
+            }
             object ParseArgument(string argument) {
                 //string parsing
                 if (argument.Substring(0, 1) == "\"" && argument.Substring(argument.Length - 1, argument.Length) == "\"") {
@@ -42,10 +44,33 @@ namespace resorter {
                 }
                 //array parsing
                 if (argument.Substring(0, 1) == "[" && argument.Substring(argument.Length - 1, argument.Length) == "]") {
-                    return argument.Substring(1, argument.Length - 1);
+                    return SplitArgumentString(argument.Substring(1, argument.Length - 1)).Select(ParseArgument).ToArray();
+                }
+                //float parsing
+                if (argument.Contains(".") && float.TryParse(argument, out float floatresult)) {
+                    return floatresult;
+                }
+                //int parsing
+                if (int.TryParse(argument, out int intresult)) {
+                    return intresult;
                 }
                 return null;
             }
+            List<object> arguments = SplitArgumentString(rawCommand.Substring(indexArgumentStart + 1, rawCommand.Length - 1)).Select(ParseArgument).ToList();
+            return new ArduinoCommand() {
+                Arguments = arguments,
+                name = functionName,
+            };
+        }
+
+        private SerialPort serialPort;
+        private bool continueReadThread = true;
+        private Thread readThread;
+
+        public void OnDataRecived(string data) {
+            Task.Factory.StartNew(() => {
+                ArduinoCommand command = ParseArduinoCommand(data);
+            });
         }
 
         public ArduinoComHandler(string comPort) {

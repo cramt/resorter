@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace resorter {
     public static class Utilities {
-        public static List<string> SplitWithin(this string str, char splittingChar, char[][] p) {
+        public static List<string> SplitWithin(this string str, char splittingChar, params char[][] p) {
             bool[] triggeredP = new bool[p.Length];
             List<int> splitPointsList = new List<int>();
             splitPointsList.Add(-1);

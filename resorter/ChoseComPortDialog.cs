@@ -10,8 +10,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace resorter {
-    public class ChoseComPornDialog : Form {
-        public ChoseComPornDialog() {
+    public class ChoseComPortDialog : Form {
+        public ChoseComPortDialog() {
             InitializeComponent();
             this.comDropDown.Items.AddRange(SerialPort.GetPortNames());
             try {
@@ -74,6 +74,7 @@ namespace resorter {
             this.Controls.Add(this.comDropDown);
             this.Name = "ChoseComPornDialog";
             this.Text = "ChoseComPornDialog";
+            this.Load += new System.EventHandler(this.ChoseComPortDialog_Load);
             this.ResumeLayout(false);
 
         }
@@ -82,6 +83,12 @@ namespace resorter {
 
         private void button_Click(object sender, EventArgs e) {
             this.Close();
+        }
+
+        private void ChoseComPortDialog_Load(object sender, EventArgs e) {
+            if(comDropDown.Items.Count == 1) {
+                this.Close();
+            }
         }
     }
 }

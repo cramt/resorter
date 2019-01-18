@@ -23,7 +23,7 @@ namespace resorter {
         }
 
         public static JSFNFunctionSchema ParseArduinoCommand(string rawCommand) {
-            if(rawCommand == "") {
+            if (rawCommand == "") {
                 return null;
             }
             int indexArgumentStart = rawCommand.IndexOf('(');
@@ -51,7 +51,7 @@ namespace resorter {
                 }
                 return null;
             }
-            var a = rawCommand.Substring(indexArgumentStart + 1,  rawCommand.Length - (indexArgumentStart+1));
+            var a = rawCommand.Substring(indexArgumentStart + 1, rawCommand.Length - (indexArgumentStart + 2));
             List<object> arguments = SplitArgumentString(a).Select(ParseArgument).ToList();
             return new JSFNFunctionSchema() {
                 Arguments = arguments,
@@ -93,24 +93,35 @@ namespace resorter {
             }
             TaskCompletionSource<List<object>> tcs = new TaskCompletionSource<List<object>>();
             SendFunctionReturns.Add(func, tcs);
-            serialPort.Write(constructSendable());
+            lastCommand = constructSendable();
+            serialPort.Write(lastCommand);
             return await tcs.Task;
         }
+
+        private string lastCommand = "";
 
         private Dictionary<string, TaskCompletionSource<List<object>>> SendFunctionReturns = new Dictionary<string, TaskCompletionSource<List<object>>>();
 
         private Dictionary<string, Func<List<object>, object>> JSFNFunctions;
 
         public JSFNComHandler(string comPort, Dictionary<string, Func<List<object>, object>> funcs) {
+            funcs.Add("error", new Func<List<object>, object>((List<object> a) => {
+                serialPort.Write(lastCommand);
+                return null;
+            }));
             JSFNFunctions = funcs;
             OnDataRecived += (object _, string data) => {
                 Task.Factory.StartNew(() => {
+                    {
+                        var a = data.Split('\n');
+                        data = a[a.Length - 1];
+                    }
                     JSFNFunctionSchema command = null;
                     try {
                         command = ParseArduinoCommand(data);
                     }
                     catch (Exception) { }
-                    if(command == null) {
+                    if (command == null) {
                         return;
                     }
 

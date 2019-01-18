@@ -12,11 +12,11 @@ namespace resorter {
     public class MainForm : Form {
         JSFNComHandler jsfnHandler;
         public MainForm() {
-            ChoseComPornDialog getPort = new ChoseComPornDialog();
+            ChoseComPortDialog getPort = new ChoseComPortDialog();
             getPort.ShowDialog();
             Dictionary<string, Func<List<object>, object>> jsfnFuncs = new Dictionary<string, Func<List<object>, object>>();
             jsfnFuncs.Add("print", new Func<List<object>, object>((List<object> l) => {
-                Console.WriteLine(l[0]);
+                Console.WriteLine(string.Join(",", l.ToArray()));
                 return null;
             }));
             jsfnHandler = new JSFNComHandler(getPort.comDropDown.Text, jsfnFuncs);

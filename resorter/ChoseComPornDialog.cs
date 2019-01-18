@@ -13,9 +13,15 @@ namespace resorter {
     public class ChoseComPornDialog : Form {
         public ChoseComPornDialog() {
             InitializeComponent();
+            this.comDropDown.Items.AddRange(SerialPort.GetPortNames());
+            try {
+                this.comDropDown.SelectedIndex = 0;
+            }
+            catch (Exception) { }
         }
 
-        private ComboBox comDropDown;
+        public ComboBox comDropDown;
+        private Button button;
         private System.ComponentModel.IContainer components = null;
 
         /// <summary>
@@ -37,27 +43,34 @@ namespace resorter {
         /// </summary>
         private void InitializeComponent() {
             this.comDropDown = new System.Windows.Forms.ComboBox();
+            this.button = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // comboBox1
+            // comDropDown
             // 
+            this.comDropDown.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comDropDown.FormattingEnabled = true;
-            this.comDropDown.Location = new System.Drawing.Point(29, 56);
-            this.comDropDown.Name = "com drop down";
+            this.comDropDown.Location = new System.Drawing.Point(25, 29);
+            this.comDropDown.Name = "comDropDown";
             this.comDropDown.Size = new System.Drawing.Size(121, 24);
             this.comDropDown.TabIndex = 0;
-            this.comDropDown.DropDownStyle = ComboBoxStyle.DropDownList;
-            this.comDropDown.Items.AddRange(SerialPort.GetPortNames());
-            try {
-                this.comDropDown.SelectedIndex = 0;
-            }
-            catch (Exception) { }
+            // 
+            // button
+            // 
+            this.button.Location = new System.Drawing.Point(25, 79);
+            this.button.Name = "button";
+            this.button.Size = new System.Drawing.Size(75, 23);
+            this.button.TabIndex = 1;
+            this.button.Text = "Ok";
+            this.button.UseVisualStyleBackColor = true;
+            this.button.Click += new System.EventHandler(this.button_Click);
             // 
             // ChoseComPornDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(245, 148);
+            this.Controls.Add(this.button);
             this.Controls.Add(this.comDropDown);
             this.Name = "ChoseComPornDialog";
             this.Text = "ChoseComPornDialog";
@@ -66,5 +79,9 @@ namespace resorter {
         }
 
         #endregion
+
+        private void button_Click(object sender, EventArgs e) {
+            this.Close();
+        }
     }
 }

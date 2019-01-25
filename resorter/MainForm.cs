@@ -16,7 +16,6 @@ namespace resorter {
 
         JSFNComHandler jsfnHandler;
         public MainForm() {
-            /*
             ChoseComPortDialog getPort = new ChoseComPortDialog();
             getPort.ShowDialog();
             Dictionary<string, Func<List<object>, object>> jsfnFuncs = new Dictionary<string, Func<List<object>, object>>();
@@ -24,8 +23,7 @@ namespace resorter {
                 Console.WriteLine(string.Join(",", l.ToArray()));
                 return null;
             }));
-            jsfnHandler = new JSFNComHandler(getPort.comDropDown.Text, jsfnFuncs);
-            */
+            jsfnHandler = new JSFNComHandler(getPort.comDropDown.Text, jsfnFuncs);  
             InitializeComponent();
             settingsButton.Click += (object sender, EventArgs e) => {
                 SettingsForm settingsForm = new SettingsForm();

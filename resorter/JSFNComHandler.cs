@@ -7,11 +7,11 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace resorter {
-    class JSFNFunctionSchema {
+    public class JSFNFunctionSchema {
         public List<object> Arguments;
         public string name;
     }
-    class JSFNComHandler {
+    public class JSFNComHandler {
 
         private static Thread CreateReadThread(JSFNComHandler jsfnHandler) {
             return new Thread(() => {
@@ -77,24 +77,32 @@ namespace resorter {
                     return x;
                 }));
             }
-            string constructSendable() {
-                return func + "(" + constructArgs(args) + ");";
-            }
+            string sendable = func + "(" + constructArgs(args) + ");";
 
-            if (SendFunctionReturns.ContainsKey(func)) {
+            Console.WriteLine("constructed JSFN function: " + sendable);
 
-                TaskCompletionSource<bool> tsc = new TaskCompletionSource<bool>();
-                void onDataRecived(object _, string data) {
-                    tsc.SetResult(true);
+            async Task checkForExistingFunction() {
+                if (SendFunctionReturns.ContainsKey(func)) {
+                    Console.WriteLine("waiting for return on function: " + func);
+                    TaskCompletionSource<bool> tsc = new TaskCompletionSource<bool>();
+                    void onDataRecived(object _, string data) {
+                        tsc.SetResult(true);
+                    }
+                    OnDataRecived += onDataRecived;
+                    await tsc.Task;
+                    OnDataRecived -= onDataRecived;
+                    await checkForExistingFunction();
                 }
-                OnDataRecived += onDataRecived;
-                await tsc.Task;
-                OnDataRecived -= onDataRecived;
             }
+
+            await checkForExistingFunction();
+
+            Console.WriteLine("writing function to arduino: " + sendable);
+
             TaskCompletionSource<List<object>> tcs = new TaskCompletionSource<List<object>>();
             SendFunctionReturns.Add(func, tcs);
-            lastCommand = constructSendable();
-            serialPort.Write(lastCommand);
+            lastCommand = sendable;
+            serialPort.Write(sendable);
             return await tcs.Task;
         }
 
@@ -122,8 +130,11 @@ namespace resorter {
                     }
                     catch (Exception) { }
                     if (command == null) {
+                        Console.WriteLine("couldnt parse: " + data);
                         return;
                     }
+
+                    Console.WriteLine("received function: " + data);
 
                     if (SendFunctionReturns.ContainsKey(command.name)) {
                         SendFunctionReturns[command.name].SetResult(command.Arguments);
@@ -131,6 +142,9 @@ namespace resorter {
                     }
                     else if (JSFNFunctions.ContainsKey(command.name)) {
                         JSFNFunctions[command.name](command.Arguments);
+                    }
+                    else {
+                        Console.WriteLine("no matching function for: " + data);
                     }
                 });
             };

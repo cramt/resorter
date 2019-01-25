@@ -46,6 +46,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CalibrationForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="JSFNComHandler.cs" />
     <Compile Include="ChoseComPortDialog.cs">
       <SubType>Form</SubType>
@@ -61,6 +64,9 @@
     </Compile>
     <Compile Include="TextBoxStreamWriter.cs" />
     <Compile Include="Utilities.cs" />
+    <EmbeddedResource Include="CalibrationForm.resx">
+      <DependentUpon>CalibrationForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ChoseComPortDialog.resx">
       <DependentUpon>ChoseComPortDialog.cs</DependentUpon>
     </EmbeddedResource>

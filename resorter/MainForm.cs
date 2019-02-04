@@ -13,18 +13,13 @@ using System.Windows.Forms;
 
 namespace resorter {
     public class MainForm : Form {
-
-        JSFNComHandler jsfnHandler;
+        ResorterStateHandler stateHandler;
         public MainForm() {
             ChoseComPortDialog getPort = new ChoseComPortDialog();
             getPort.ShowDialog();
-            Dictionary<string, Func<List<object>, object>> jsfnFuncs = new Dictionary<string, Func<List<object>, object>>();
-            jsfnFuncs.Add("print", new Func<List<object>, object>((List<object> l) => {
-                Console.WriteLine(string.Join(",", l.ToArray()));
-                return null;
-            }));
+            
             try {
-                jsfnHandler = new JSFNComHandler(getPort.comDropDown.Text, jsfnFuncs);
+                stateHandler = new ResorterStateHandler(getPort.comDropDown.Text, Program.Settings.Steps);
             }
             catch (ArgumentException) {
                 MessageBox.Show("couldnt connect to COM port");
@@ -39,21 +34,23 @@ namespace resorter {
                 Console.WriteLine("updated settings");
             };
             calibrateButton.Click += (object sender, EventArgs e) => {
-                CalibrationForm calibrationForm = new CalibrationForm(jsfnHandler);
+                CalibrationForm calibrationForm = new CalibrationForm(stateHandler.ComHandler);
                 Console.WriteLine("openning calibration dialog");
                 calibrationForm.ShowDialog();
                 Console.WriteLine("closing calibration dialog");
             };
             Load += (object sender, EventArgs e) => {
                 TextBoxStreamWriter textWriter = new TextBoxStreamWriter(txtConsole);
-                FileStream logFile = File.Create("log "+ DateTime.Now.ToString("dd-MM-yyyy HH-mm-ss")  + ".txt");
+                FileStream logFile = File.Create("log " + DateTime.Now.ToString("dd-MM-yyyy HH-mm-ss") + ".txt");
                 textWriter.OnLog += (object _, char c) => {
                     byte[] data = Encoding.UTF8.GetBytes(new char[] { c });
                     logFile.Write(data, 0, data.Length);
                 };
                 Console.SetOut(textWriter);
             };
-            startButton
+            startButton.Click += (object sender, EventArgs e) => {
+                Console.WriteLine("start isnt implemented yet");
+            };
         }
 
         private Button settingsButton;

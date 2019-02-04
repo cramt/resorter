@@ -94,7 +94,7 @@ namespace resorter {
             bool going = true;
             Task.Factory.StartNew(async () => {
                 while (going) {
-                    await handler.SendFunction("grabberTurn", new object[] { direction, 60 });
+                    await handler.SendFunction("catcherTurn", new object[] { direction, 60 });
                 }
             });
             turnLeftButton.MouseDown += (object sender, MouseEventArgs e) => {

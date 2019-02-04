@@ -25,6 +25,8 @@ namespace resorter {
         private void InitializeComponent() {
             this.mainSettingsTabControl = new System.Windows.Forms.TabControl();
             this.generalSettings = new System.Windows.Forms.TabPage();
+            this.stepsTextBox = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
             this.toleranceUnitDrowDown = new System.Windows.Forms.ComboBox();
             this.toleranceTextBox = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
@@ -55,6 +57,8 @@ namespace resorter {
             // 
             // generalSettings
             // 
+            this.generalSettings.Controls.Add(this.stepsTextBox);
+            this.generalSettings.Controls.Add(this.label5);
             this.generalSettings.Controls.Add(this.toleranceUnitDrowDown);
             this.generalSettings.Controls.Add(this.toleranceTextBox);
             this.generalSettings.Controls.Add(this.label10);
@@ -75,6 +79,22 @@ namespace resorter {
             this.generalSettings.TabIndex = 0;
             this.generalSettings.Text = "general";
             this.generalSettings.UseVisualStyleBackColor = true;
+            // 
+            // stepsTextBox
+            // 
+            this.stepsTextBox.Location = new System.Drawing.Point(90, 161);
+            this.stepsTextBox.Name = "stepsTextBox";
+            this.stepsTextBox.Size = new System.Drawing.Size(100, 22);
+            this.stepsTextBox.TabIndex = 15;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(7, 161);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(44, 17);
+            this.label5.TabIndex = 14;
+            this.label5.Text = "Steps";
             // 
             // toleranceUnitDrowDown
             // 
@@ -249,6 +269,15 @@ namespace resorter {
                 }
             };
 
+            stepsTextBox.Text = SettingsObject.Steps.ToString();
+
+            stepsTextBox.TextChanged += (object sender, EventArgs e) => {
+                stepsTextBox.Text = CleanForDigits(stepsTextBox.Text);
+                if (int.TryParse(stepsTextBox.Text, out int result)) {
+                    SettingsObject.Steps = result;
+                }
+            };
+
             toleranceUnitDrowDown.SelectedIndex = SettingsObject.ToleranceIsPercentage ? 1 : 0;
             toleranceUnitDrowDown.TextChanged += (object sender, EventArgs e) => {
                 SettingsObject.ToleranceIsPercentage = toleranceUnitDrowDown.Text == "%";
@@ -279,6 +308,8 @@ namespace resorter {
         private Label label1;
         public ComboBox toleranceUnitDrowDown;
         private TabPage speedSettings;
+        private TextBox stepsTextBox;
+        private Label label5;
         private TextBox[] chamberTextBoxes;
     }
 }

@@ -23,7 +23,13 @@ namespace resorter {
                 Console.WriteLine(string.Join(",", l.ToArray()));
                 return null;
             }));
-            jsfnHandler = new JSFNComHandler(getPort.comDropDown.Text, jsfnFuncs);  
+            try {
+                jsfnHandler = new JSFNComHandler(getPort.comDropDown.Text, jsfnFuncs);
+            }
+            catch (ArgumentException) {
+                MessageBox.Show("couldnt connect to COM port");
+                Close();
+            }
             InitializeComponent();
             settingsButton.Click += (object sender, EventArgs e) => {
                 SettingsForm settingsForm = new SettingsForm();
@@ -47,6 +53,7 @@ namespace resorter {
                 };
                 Console.SetOut(textWriter);
             };
+            startButton
         }
 
         private Button settingsButton;

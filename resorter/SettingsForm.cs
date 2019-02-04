@@ -30,13 +30,10 @@ namespace resorter {
             this.label10 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
-            this.chamber4TextBox = new System.Windows.Forms.TextBox();
             this.chamber3TextBox = new System.Windows.Forms.TextBox();
             this.chamber2TextBox = new System.Windows.Forms.TextBox();
             this.chamber1TextBox = new System.Windows.Forms.TextBox();
-            this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -63,13 +60,10 @@ namespace resorter {
             this.generalSettings.Controls.Add(this.label10);
             this.generalSettings.Controls.Add(this.label9);
             this.generalSettings.Controls.Add(this.label8);
-            this.generalSettings.Controls.Add(this.label7);
             this.generalSettings.Controls.Add(this.label6);
-            this.generalSettings.Controls.Add(this.chamber4TextBox);
             this.generalSettings.Controls.Add(this.chamber3TextBox);
             this.generalSettings.Controls.Add(this.chamber2TextBox);
             this.generalSettings.Controls.Add(this.chamber1TextBox);
-            this.generalSettings.Controls.Add(this.label5);
             this.generalSettings.Controls.Add(this.label4);
             this.generalSettings.Controls.Add(this.label3);
             this.generalSettings.Controls.Add(this.label2);
@@ -89,14 +83,14 @@ namespace resorter {
             this.toleranceUnitDrowDown.Items.AddRange(new object[] {
             "Ω",
             "%"});
-            this.toleranceUnitDrowDown.Location = new System.Drawing.Point(197, 161);
+            this.toleranceUnitDrowDown.Location = new System.Drawing.Point(197, 130);
             this.toleranceUnitDrowDown.Name = "toleranceUnitDrowDown";
             this.toleranceUnitDrowDown.Size = new System.Drawing.Size(49, 24);
             this.toleranceUnitDrowDown.TabIndex = 6;
             // 
             // toleranceTextBox
             // 
-            this.toleranceTextBox.Location = new System.Drawing.Point(90, 161);
+            this.toleranceTextBox.Location = new System.Drawing.Point(90, 130);
             this.toleranceTextBox.Name = "toleranceTextBox";
             this.toleranceTextBox.Size = new System.Drawing.Size(100, 22);
             this.toleranceTextBox.TabIndex = 5;
@@ -104,7 +98,7 @@ namespace resorter {
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(7, 161);
+            this.label10.Location = new System.Drawing.Point(7, 130);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(72, 17);
             this.label10.TabIndex = 13;
@@ -128,15 +122,6 @@ namespace resorter {
             this.label8.TabIndex = 11;
             this.label8.Text = "Ω";
             // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(197, 130);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(19, 17);
-            this.label7.TabIndex = 10;
-            this.label7.Text = "Ω";
-            // 
             // label6
             // 
             this.label6.AutoSize = true;
@@ -145,13 +130,6 @@ namespace resorter {
             this.label6.Size = new System.Drawing.Size(19, 17);
             this.label6.TabIndex = 9;
             this.label6.Text = "Ω";
-            // 
-            // chamber4TextBox
-            // 
-            this.chamber4TextBox.Location = new System.Drawing.Point(90, 130);
-            this.chamber4TextBox.Name = "chamber4TextBox";
-            this.chamber4TextBox.Size = new System.Drawing.Size(100, 22);
-            this.chamber4TextBox.TabIndex = 4;
             // 
             // chamber3TextBox
             // 
@@ -173,15 +151,6 @@ namespace resorter {
             this.chamber1TextBox.Name = "chamber1TextBox";
             this.chamber1TextBox.Size = new System.Drawing.Size(100, 22);
             this.chamber1TextBox.TabIndex = 1;
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(7, 130);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(77, 17);
-            this.label5.TabIndex = 4;
-            this.label5.Text = "Chamber 4";
             // 
             // label4
             // 
@@ -249,7 +218,6 @@ namespace resorter {
                 chamber1TextBox,
                 chamber2TextBox,
                 chamber3TextBox,
-                chamber4TextBox,
             };
             SettingsObject = Program.Settings;
 
@@ -301,13 +269,10 @@ namespace resorter {
         private Label label10;
         private Label label9;
         private Label label8;
-        private Label label7;
         private Label label6;
-        private TextBox chamber4TextBox;
         private TextBox chamber3TextBox;
         private TextBox chamber2TextBox;
         private TextBox chamber1TextBox;
-        private Label label5;
         private Label label4;
         private Label label3;
         private Label label2;

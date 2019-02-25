@@ -10,6 +10,12 @@ namespace resorter {
         private int steps;
         private int catcherPosition = 0;
         private int transporterPosition = 0;
+        private List<float>[] listOfResistors = new List<float>[] {
+            new List<float>(),
+            new List<float>(),
+            new List<float>(),
+            new List<float>()
+        };
         public ResorterStateHandler(string port, int steps) {
             Dictionary<string, Func<List<object>, object>> jsfnFuncs = new Dictionary<string, Func<List<object>, object>>();
             jsfnFuncs.Add("print", new Func<List<object>, object>((List<object> l) => {
@@ -52,6 +58,8 @@ namespace resorter {
                     bestMatching = Program.Settings.Chambers.Length + 1;
                 }
                 Console.WriteLine("resistance is " + (withinRange ? "" : "not") + "within range");
+                Console.WriteLine("adding " + res + " in chamber " + bestMatching + " to registry");
+                listOfResistors[bestMatching].Add(res);
                 Console.WriteLine("turning catcher wheel to chamber: " + bestMatching);
                 await CatcherTurnToChamber(bestMatching, 60, 20);
                 Console.WriteLine("opening ohm arm");
@@ -61,16 +69,16 @@ namespace resorter {
                 await OhmArmPosition(ohmArmStandartPos);
                 if(stopWhenPossibleTcs != null) {
                     Console.WriteLine("stopping");
-                    stopWhenPossibleTcs.SetResult(true);
+                    stopWhenPossibleTcs.SetResult(listOfResistors);
                     return;
                 }
             }
         }
 
-        private TaskCompletionSource<bool> stopWhenPossibleTcs = null;
-        public Task StopWhenPossible() {
+        private TaskCompletionSource<List<float>[]> stopWhenPossibleTcs = null;
+        public Task<List<float>[]> StopWhenPossible() {
             Console.WriteLine("stopping once current routine is done");
-            stopWhenPossibleTcs = new TaskCompletionSource<bool>();
+            stopWhenPossibleTcs = new TaskCompletionSource<List<float>[]>();
             return stopWhenPossibleTcs.Task;
         }
 

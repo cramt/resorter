@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -17,7 +18,7 @@ namespace resorter {
         public MainForm() {
             ChoseComPortDialog getPort = new ChoseComPortDialog();
             getPort.ShowDialog();
-            
+
             try {
                 stateHandler = new ResorterStateHandler(getPort.comDropDown.Text, Program.Settings.Steps);
             }
@@ -41,7 +42,7 @@ namespace resorter {
             };
             Load += (object sender, EventArgs e) => {
                 TextBoxStreamWriter textWriter = new TextBoxStreamWriter(txtConsole);
-                FileStream logFile = File.Create("log " + DateTime.Now.ToString("dd-MM-yyyy HH-mm-ss") + ".txt");
+                FileStream logFile = File.Create("log_" + DateTime.Now.ToString("dd-MM-yyyy HH-mm-ss") + ".txt");
                 textWriter.OnLog += (object _, char c) => {
                     byte[] data = Encoding.UTF8.GetBytes(new char[] { c });
                     logFile.Write(data, 0, data.Length);
@@ -49,7 +50,26 @@ namespace resorter {
                 Console.SetOut(textWriter);
             };
             startButton.Click += (object sender, EventArgs e) => {
-                Console.WriteLine("start isnt implemented yet");
+                stateHandler.Start();
+            };
+            stopButton.Click += async (object sender, EventArgs e) => {
+                List<float>[] list = await stateHandler.StopWhenPossible();
+                StringBuilder str = new StringBuilder();
+                for (int i = 0; i < list.Length; i++) {
+                    str.Append("chamber " + i);
+                    list[i].ForEach(x => {
+                        str.Append("\t");
+                        str.Append(x);
+                    });
+                }
+                
+                string filename = Path.Combine("run_" + DateTime.Now.ToString("dd-MM-yyyy HH-mm-ss") + ".txt");
+                FileStream file = File.Create(filename);
+                string s = str.ToString();
+                byte[] b = Encoding.ASCII.GetBytes(s);
+                file.Write(b, 0, b.Length);
+                file.Close();
+                Process.Start(filename);
             };
         }
 
@@ -58,6 +78,7 @@ namespace resorter {
         private TextBox txtConsole;
         private Button calibrateButton;
         private Button startButton;
+        private Button stopButton;
         private IContainer components = null;
 
         protected override void Dispose(bool disposing) {
@@ -74,6 +95,7 @@ namespace resorter {
             this.txtConsole = new System.Windows.Forms.TextBox();
             this.calibrateButton = new System.Windows.Forms.Button();
             this.startButton = new System.Windows.Forms.Button();
+            this.stopButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // settingsButton
@@ -120,11 +142,21 @@ namespace resorter {
             this.startButton.Text = "start";
             this.startButton.UseVisualStyleBackColor = true;
             // 
+            // stopButton
+            // 
+            this.stopButton.Location = new System.Drawing.Point(544, 405);
+            this.stopButton.Name = "stopButton";
+            this.stopButton.Size = new System.Drawing.Size(149, 33);
+            this.stopButton.TabIndex = 5;
+            this.stopButton.Text = "stop when possible ";
+            this.stopButton.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.stopButton);
             this.Controls.Add(this.startButton);
             this.Controls.Add(this.calibrateButton);
             this.Controls.Add(this.txtConsole);

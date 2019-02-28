@@ -11,7 +11,7 @@ using System.Windows.Forms;
 
 namespace resorter {
     public partial class SettingsForm : Form {
-
+        // ui stuff
         private System.ComponentModel.IContainer components = null;
 
 
@@ -22,6 +22,7 @@ namespace resorter {
             base.Dispose(disposing);
         }
 
+        // ui stuff
         private void InitializeComponent() {
             this.mainSettingsTabControl = new System.Windows.Forms.TabControl();
             this.generalSettings = new System.Windows.Forms.TabPage();
@@ -233,65 +234,95 @@ namespace resorter {
 
         }
 
+        //takes the values in the ui elements and applies to the actual settings variable
         private void ApplySettings() {
+            // makes array of the textboxes for the chambers
             chamberTextBoxes = new TextBox[] {
                 chamber1TextBox,
                 chamber2TextBox,
                 chamber3TextBox,
             };
+            // variable for the settings object
             SettingsObject = Program.Settings;
 
+            //function to make sure that a string only holds digits (so "3fds3s3" will become "333")
             string CleanForDigits(string str) {
                 Regex digitsOnly = new Regex(@"[^\d]");
                 return digitsOnly.Replace(str, "");
             }
-
+            //function for removing all not digits from the textboxes and putting the values into the settings object
             void textBoxTextChanged(object sender, EventArgs e) {
+                //loop throught al
                 for (int i = 0; i < chamberTextBoxes.Length; i++) {
+                    //clean for digits
                     chamberTextBoxes[i].Text = CleanForDigits(chamberTextBoxes[i].Text);
+                    //try to parse
+                    //wornt parse if empty
                     if (int.TryParse(chamberTextBoxes[i].Text, out int result)) {
+                        //set it in the settings object
                         SettingsObject.Chambers[i] = result;
                     }
                 }
             }
-
+            
+            //loop throught textboxes
             for (int i = 0; i < chamberTextBoxes.Length; i++) {
+                //change their text to what the current value in the settings
                 chamberTextBoxes[i].Text = SettingsObject.Chambers[i].ToString();
+                //whenever text is changed in the textboxes, run the function from before
                 chamberTextBoxes[i].TextChanged += textBoxTextChanged;
             }
 
+            //change the tolerence textbox text to be the current value in the settings
             toleranceTextBox.Text = SettingsObject.Tolerance.ToString();
 
+            // whenever text is the tolerance textbox is changed
             toleranceTextBox.TextChanged += (object sender, EventArgs e) => {
+                //remove everything thats not a digit
                 toleranceTextBox.Text = CleanForDigits(toleranceTextBox.Text);
+                //try and parse
                 if (int.TryParse(toleranceTextBox.Text, out int result)) {
+                    //put into the settigns object
                     SettingsObject.Tolerance = result;
                 }
             };
 
+            //set the steps textbox text to be the current value in the settings
             stepsTextBox.Text = SettingsObject.Steps.ToString();
 
+            //whenever text in the steps textbox is changed
             stepsTextBox.TextChanged += (object sender, EventArgs e) => {
+                //remove everything thats not a digit
                 stepsTextBox.Text = CleanForDigits(stepsTextBox.Text);
+                //try and parse
                 if (int.TryParse(stepsTextBox.Text, out int result)) {
+                    //put into the settigns object
                     SettingsObject.Steps = result;
                 }
             };
 
+            //set the value of the dropdown menu for the unit picker for the tolence equal to whever is already in the settings
+            // 1st in the dropdown menu is percentage and ohm is the 0th
             toleranceUnitDrowDown.SelectedIndex = SettingsObject.ToleranceIsPercentage ? 1 : 0;
+            //whenver the text in the dropdown menu is changed
             toleranceUnitDrowDown.TextChanged += (object sender, EventArgs e) => {
+                // if the text is the percentage sign "%"
+                // the value of the field in the settings object will be true
                 SettingsObject.ToleranceIsPercentage = toleranceUnitDrowDown.Text == "%";
             };
         }
 
 
         public SettingsForm() {
+            //load ui
             InitializeComponent();
+            //apply the settings to the ui, so when they change in the ui, the settings will also change
             ApplySettings();
         }
 
         public Settings SettingsObject { get; private set; }
 
+        // all the ui elements
         private TabControl mainSettingsTabControl;
         private TabPage generalSettings;
         private TextBox toleranceTextBox;

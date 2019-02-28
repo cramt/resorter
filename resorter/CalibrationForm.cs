@@ -9,7 +9,9 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace resorter {
+    // this a popup form for calibrating the position of the catcher stepper moter, so that it is in position for the state handler
     public class CalibrationForm : Form {
+        // ui stuff, kidna irrelevant
         private Button turnLeftButton;
         private Button turnRightButton;
         private Button doneButton;
@@ -36,6 +38,7 @@ namespace resorter {
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
+        // more ui stuff
         private void InitializeComponent() {
             this.turnLeftButton = new System.Windows.Forms.Button();
             this.turnRightButton = new System.Windows.Forms.Button();
@@ -84,39 +87,52 @@ namespace resorter {
         }
 
         #endregion
-
+        // the handler for communicating with the arduino in JSFN 
+        // this is not throught the state handler, cause we dont want to the state handler to change its perception of the currents steps when we change them
         private JSFNComHandler handler;
 
         public CalibrationForm(JSFNComHandler handler) {
+            //set the handler
             this.handler = handler;
+            // start the ui
             InitializeComponent();
+            // variable for holding current direction
             int direction = 0;
+            // variable for stopping loop again
             bool going = true;
+            // start another thread
             Task.Factory.StartNew(async () => {
+                //just keep going
                 while (going) {
-                    await handler.SendFunction("catcherTurn", new object[] { direction, 60 });
+                    //turn the catcher to whatever is in the direction variable (this is not positon, but direction)
+                    await handler.SendFunction("catcherTurn", new object[] { direction, 60, 20 });
                 }
             });
+            //if the button is pressed down, set direction to 1
             turnLeftButton.MouseDown += (object sender, MouseEventArgs e) => {
                 if (e.Button == MouseButtons.Left) {
                     direction = 1;
                 }
             };
+            //if left button is released again, set it back to 0
             turnLeftButton.MouseUp += (object sender, MouseEventArgs e) => {
                 if (e.Button == MouseButtons.Left) {
                     direction = 0;
                 }
             };
+            //if right button is pressed down, set it to -1
             turnRightButton.MouseDown += (object sender, MouseEventArgs e) => {
                 if (e.Button == MouseButtons.Left) {
                     direction = -1;
                 }
             };
+            //if right button is released again, set it back to 0
             turnRightButton.MouseUp += (object sender, MouseEventArgs e) => {
                 if (e.Button == MouseButtons.Left) {
                     direction = 0;
                 }
             };
+            //when we're done, we set going to false to stop the loop and close the whole thing
             doneButton.Click += (object sender, EventArgs e) => {
                 going = false;
                 this.Close();

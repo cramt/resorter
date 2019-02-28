@@ -10,16 +10,22 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace resorter {
+    // form for chosing the COM port we'll be using
     public class ChoseComPortDialog : Form {
         public ChoseComPortDialog() {
+            // start the UI
             InitializeComponent();
+            // add the port names to the drop down menu
             this.comDropDown.Items.AddRange(SerialPort.GetPortNames());
+            // try at make the dropdown menu target the first item 
+            // (this will crash if there is not first item, thats why its in a try catch statement)
             try {
                 this.comDropDown.SelectedIndex = 0;
             }
             catch (Exception) { }
         }
 
+        //ui bits 
         public ComboBox comDropDown;
         private Button button;
         private System.ComponentModel.IContainer components = null;
@@ -86,6 +92,8 @@ namespace resorter {
         }
 
         private void ChoseComPortDialog_Load(object sender, EventArgs e) {
+            //when the ui is loaded,
+            //if there is only one thing in the dropdown menu, we'll be going with that
             if(comDropDown.Items.Count == 1) {
                 this.Close();
             }

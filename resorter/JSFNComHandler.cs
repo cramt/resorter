@@ -190,6 +190,7 @@ namespace resorter {
 
                 // if we are awaiting a function of the name we recived
                 if (SendFunctionReturns.ContainsKey(command.name)) {
+                    Console.WriteLine("found matching return call for function");
                     // resovle the awaiter
                     SendFunctionReturns[command.name].SetResult(command.Arguments);
                     // remove the entry from the directory
@@ -197,6 +198,7 @@ namespace resorter {
                 }
                 // if the name matches one of the names of the functions the arduino has available
                 else if (JSFNFunctions.ContainsKey(command.name)) {
+                    Console.WriteLine("found matching function");
                     // do the function that the arduino requested
                     JSFNFunctions[command.name](command.Arguments);
                 }

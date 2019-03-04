@@ -42,11 +42,13 @@ namespace resorter {
             const int ohmArmStandartPos = 45;
             const int ohmArmThrowPos = 155;
             const int ohmArmReadPos = 0;
+            const int standartAcc = 50;
+            const int standartspeed = 120;
             // loop dat shit
             while (true) {
                 Console.WriteLine("turning transporter wheel");
                 // turn the transporter half way, this will put one resistor on the ohmmeter
-                await TransporterTurn(steps / 2, 60, 20);
+                await TransporterTurn(-(steps / 2), standartspeed, standartAcc);
                 Console.WriteLine("turning ohm arm to read resistance");
                 // turn the ohmmeter arm to read position
                 await OhmArmPosition(ohmArmReadPos);
@@ -90,7 +92,7 @@ namespace resorter {
                 listOfResistors[bestMatching].Add(res);
                 Console.WriteLine("turning catcher wheel to chamber: " + bestMatching);
                 // turn the catcher to the chamber
-                await CatcherTurnToChamber(bestMatching, 60, 20);
+                await CatcherTurnToChamber(bestMatching, standartspeed, standartAcc);
                 Console.WriteLine("opening ohm arm");
                 // throw the resistor
                 await OhmArmPosition(ohmArmThrowPos);

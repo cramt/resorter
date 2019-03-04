@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -105,7 +106,8 @@ namespace resorter {
                 //just keep going
                 while (going) {
                     //turn the catcher to whatever is in the direction variable (this is not positon, but direction)
-                    await handler.SendFunction("catcherTurn", new object[] { direction, 60, 20 });
+                    await handler.SendFunction("catcherTurn", new object[] { direction * 10, 120, 50 });
+                    Thread.Sleep(10);
                 }
             });
             //if the button is pressed down, set direction to 1

@@ -30,6 +30,7 @@ namespace resorter {
 
         // parse raw text from the arduino
         public static JSFNFunctionSchema ParseArduinoCommand(string rawCommand) {
+            Console.WriteLine("parsing: " + rawCommand);
             // sometimes we recive nothing in the strings for some reason *shrug*
             if (rawCommand == "") {
                 return null;
@@ -38,6 +39,12 @@ namespace resorter {
             int indexArgumentStart = rawCommand.IndexOf('(');
             // get the part of the string from 0 til "("
             string functionName = rawCommand.Substring(0, indexArgumentStart);
+            if (rawCommand.Substring(indexArgumentStart).Trim() == "()") {
+                return new JSFNFunctionSchema() {
+                    name = functionName,
+                    Arguments = new List<object>(),
+                };
+            }
             // this function converts the string inside (), into a list of strings as the arguments
             List<string> SplitArgumentString(string argumentString) {
                 return argumentString.SplitWithin(',', new char[] { '"', '"' }, new char[] { '[', ']' })
@@ -191,10 +198,11 @@ namespace resorter {
                 // if we are awaiting a function of the name we recived
                 if (SendFunctionReturns.ContainsKey(command.name)) {
                     Console.WriteLine("found matching return call for function");
-                    // resovle the awaiter
-                    SendFunctionReturns[command.name].SetResult(command.Arguments);
+                    TaskCompletionSource<List<object>> temp = SendFunctionReturns[command.name];
                     // remove the entry from the directory
                     SendFunctionReturns.Remove(command.name);
+                    // resovle the awaiter
+                    temp.SetResult(command.Arguments);
                 }
                 // if the name matches one of the names of the functions the arduino has available
                 else if (JSFNFunctions.ContainsKey(command.name)) {

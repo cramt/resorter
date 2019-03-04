@@ -164,12 +164,19 @@ namespace resorter {
             //ask the JSFNCOMHandler to nicely tell the arduino to tell the JSFNCOMHandler to tell you the current resistance
             var re = await ComHandler.SendFunction("readResistance", new object[] { });
             // if it can be parsed
-            if (float.TryParse((string)re[0], out float result)) {
-                // return it
-                return result;
+            if (!float.TryParse((string)re[0], out float rawValue)) {
+                // if it cannot be parsed, return null;
+                return null;
             }
-            // if it cannot be parsed, return null;
-            return null;
+            // if it can be parsed
+            if (!int.TryParse((string)re[1], out int pin)) {
+                // if it cannot be parsed, return null;
+                return null;
+            }
+            //the resistance of the wins we have
+            int[] pins = new int[] { 1000, 10000, 100000, 100000 };
+            //return the value
+            return pins[pin] * rawValue;
         }
     }
 }
